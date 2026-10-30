@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adega Vinheria Agnello</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='%236b1a2b'/><g fill='none' stroke='%23c9a96e' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><path d='M7 3h10l-.6 5.2A4.4 4.4 0 0 1 12 12a4.4 4.4 0 0 1-4.4-3.8L7 3Z'/><path d='M12 12v8'/><path d='M8.5 21h7'/></g></svg>"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Biblioteca de gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+    <style>
+      :root {
+        --fundo: #1c1012;
+        --fundo-luz: #3a1a20;
+        --bordo: #6b1a2b;
+        --bordo-claro: #8c2a3e;
+        --dourado: #c9a96e;
+        --dourado-suave: rgba(201, 169, 110, 0.35);
+        --creme: #f4ecdf;
+        --creme-escuro: #e8dcc8;
+        --garrafa: #3f6b5a;
+        --tinta: #2a1a1c;
+        --tinta-suave: #6e5a5c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        background: radial-gradient(
+            ellipse at top,
+            var(--fundo-luz) 0%,
+            var(--fundo) 70%
+          )
+          fixed;
+        background-color: var(--fundo);
+        color: var(--creme);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 40px 16px 60px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 36px;
+        margin-top: 40px;
+      }
+
+      .subtitulo {
+        font-size: 0.75em;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--dourado);
+        margin: 0 0 6px;
+      }
+
+      h1 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-weight: 700;
+        color: var(--creme);
+        font-size: clamp(2.2em, 6vw, 3.4em);
+        line-height: 1.1;
+        margin: 0;
+      }
+
+      h1 em {
+        color: var(--dourado);
+        font-weight: 500;
+      }
+
+      .medicoes {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 24px;
+        width: 100%;
+        max-width: 900px;
+      }
+
+      .medicao {
+        flex: 1 1 220px;
+        max-width: 280px;
+        background: linear-gradient(
+          180deg,
+          var(--creme) 0%,
+          var(--creme-escuro) 100%
+        );
+        color: var(--tinta);
+        border: 1px solid var(--dourado);
+        outline: 1px solid var(--dourado);
+        outline-offset: -8px;
+        border-radius: 4px;
+        padding: 30px 24px 26px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+
+      .medicao:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+      }
+
+      .rotulo {
+        font-size: 0.72em;
+        font-weight: 600;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--bordo);
+        padding-bottom: 8px;
+      }
+
+      .valor {
+        font-family: "Inter", Arial, sans-serif;
+        font-weight: 700;
+        font-size: 2em;
+        line-height: 1;
+        color: var(--tinta);
+      }
+
+      .unidade {
+        font-size: 0.5em;
+        font-weight: 500;
+        color: var(--tinta-suave);
+      }
+
+      .faixa {
+        font-family: "Inter", Arial, sans-serif;
+        font-style: italic;
+        font-size: 0.95em;
+        color: var(--tinta-suave);
+        padding-bottom: 6px;
+      }
+
+      .status {
+        margin-top: 6px;
+        font-size: 0.7em;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 999px;
+        border: 1px solid currentColor;
+        color: var(--tinta-suave);
+      }
+
+      .status.ok {
+        color: var(--garrafa);
+      }
+      .status.alerta {
+        color: #fff;
+        background: var(--bordo);
+        border-color: var(--bordo);
+      }
+
+      .atualizado {
+        color: var(--dourado);
+        padding-top: 4px;
+        font-family: "Inter", Arial, sans-serif;
+        font-size: 0.9em;
+        margin: 14px 0;
+      }
+
+      .grafico {
+        background: linear-gradient(
+          180deg,
+          var(--creme) 0%,
+          var(--creme-escuro) 100%
+        );
+        border: 1px solid var(--dourado);
+        outline: 1px solid var(--dourado-suave);
+        outline-offset: -8px;
+        border-radius: 4px;
+        padding: 28px 24px 24px;
+        width: 100%;
+        max-width: 900px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        margin: 28px 0;
+      }
+
+      .grafico h2 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-weight: 700;
+        color: var(--bordo);
+        font-size: 1.6em;
+        margin: 0 0 4px;
+        text-align: center;
+      }
+
+      .grafico p {
+        text-align: center;
+        margin: 0 0 18px;
+        font-size: 0.72em;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--tinta-suave);
+      }
+
+      footer {
+        margin-top: 36px;
+        font-size: 0.72em;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--dourado-suave);
+      }
+
+      @media (max-width: 520px) {
+        .medicao {
+          max-width: 100%;
+        }
+        .grafico {
+          padding: 22px 12px 16px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- Header -->
+    <header>
+      <p class="subtitulo">Monitoramento da adega</p>
+      <h1>Vinheria <em>Agnello</em></h1>
+      <p class="atualizado">Última leitura: <span id="horario">--</span></p>
+    </header>
+
+    <!-- Leitura atual -->
+    <section class="medicoes">
+      <div class="medicao">
+        <span class="rotulo">Temperatura</span>
+        <span class="valor"
+          ><span id="temperatura">--</span
+          ><span class="unidade"> °C</span></span
+        >
+        <span class="faixa">ideal 10 a 15 °C</span>
+        <span class="status" id="status-temperatura">aguardando</span>
+      </div>
+      <div class="medicao">
+        <span class="rotulo">Umidade</span>
+        <span class="valor"
+          ><span id="umidade">--</span><span class="unidade"> %</span></span
+        >
+        <span class="faixa">ideal 55 a 75 %</span>
+        <span class="status" id="status-umidade">aguardando</span>
+      </div>
+      <div class="medicao">
+        <span class="rotulo">Luminosidade</span>
+        <span class="valor"
+          ><span id="luminosidade">--</span
+          ><span class="unidade"> %</span></span
+        >
+        <span class="faixa">ideal até 30 %</span>
+        <span class="status" id="status-luminosidade">aguardando</span>
+      </div>
+    </section>
+
+    <!-- Histórico -->
+    <section class="grafico">
+      <h2>Histórico da Adega</h2>
+      <p>Últimas 100 leituras</p>
+      <canvas id="grafico"></canvas>
+    </section>
+
+    <footer>Vinheria Agnello | UNO</footer>
+
+    <script>
+      const API = "http://localhost:1880";
+
+      // Faixas ideais de conservação do vinho 
+      const LIMITES = {
+        temperatura: { min: 10, max: 15 },
+        umidade: { min: 55, max: 75 },
+        luminosidade: { min: 0, max: 30 },
+      };
+
+      // Cores da paleta para o gráfico
+      const COR = {
+        bordo: "#6b1a2b",
+        garrafa: "#3f6b5a",
+        dourado: "#b8924f",
+        tinta: "#2a1a1c",
+      };
+
+      // Conversão do timestamp para o horário local
+      const formatarHora = (ts) => new Date(ts).toLocaleTimeString("pt-BR");
+
+      // Marca o status de cada sensor como Ideal ou Atenção
+      function avaliar(sensor, valor) {
+        const { min, max } = LIMITES[sensor];
+        const el = document.getElementById("status-" + sensor);
+        const ok = valor >= min && valor <= max;
+        el.textContent = ok ? "Ideal" : "Atenção";
+        el.classList.toggle("ok", ok);
+        el.classList.toggle("alerta", !ok);
+      }
+
+      // Mostra a leitura mais recente 
+      function mostrarUltima(data) {
+        document.getElementById("temperatura").textContent =
+          data.temperatura.toFixed(1);
+        document.getElementById("umidade").textContent =
+          data.umidade.toFixed(1);
+        document.getElementById("luminosidade").textContent = data.luminosidade;
+        document.getElementById("horario").textContent = new Date(
+          data.timestamp,
+        ).toLocaleString("pt-BR");
+
+        avaliar("temperatura", data.temperatura);
+        avaliar("umidade", data.umidade);
+        avaliar("luminosidade", data.luminosidade);
+      }
+
+      // Estilo padrão do Chart.js com a marca da vinheria
+      Chart.defaults.font.family = "Inter, Arial, sans-serif";
+      Chart.defaults.color = COR.tinta;
+      Chart.defaults.borderColor = "rgba(107, 26, 43, 0.12)";
+
+      // Gráfico de linhas com temperatura, umidade e luminosidade
+      const grafico = new Chart(document.getElementById("grafico"), {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: "Temperatura (°C)",
+              data: [],
+              borderColor: COR.bordo,
+              backgroundColor: "rgba(107, 26, 43, 0.12)",
+              tension: 0.35,
+              borderWidth: 2,
+              pointRadius: 0,
+            },
+            {
+              label: "Umidade (%)",
+              data: [],
+              borderColor: COR.garrafa,
+              tension: 0.35,
+              borderWidth: 2,
+              pointRadius: 0,
+            },
+            {
+              label: "Luminosidade (%)",
+              data: [],
+              borderColor: COR.dourado,
+              borderDash: [6, 4],
+              tension: 0.35,
+              borderWidth: 2,
+              pointRadius: 0,
+            },
+          ],
+        },
+        options: {
+          animation: false,
+          interaction: { mode: "nearest", axis: "xy", intersect: false },
+          elements: {
+            point: {
+              hoverRadius: 6,
+              hoverBorderWidth: 2,
+              hoverBackgroundColor: "#f4ecdf",
+            },
+          },
+          plugins: {
+            legend: {
+              labels: { usePointStyle: true, pointStyle: "line", padding: 18 },
+            },
+            tooltip: {
+              backgroundColor: COR.tinta,
+              titleColor: "#c9a96e",
+              bodyColor: "#f4ecdf",
+              borderColor: "#c9a96e",
+              borderWidth: 1,
+            },
+          },
+          scales: {
+            x: { ticks: { maxTicksLimit: 10 }, grid: { display: false } },
+          },
+        },
+      });
+
+      // Busca o histórico no Node-RED,
+      // mostra a última leitura e redesenha o gráfico com as últimas 100
+      function atualizarHistorico() {
+        fetch(API + "/Historico")
+          .then((response) => response.json())
+          .then((todas) => {
+            if (!todas.length) return; // ainda sem leituras
+            mostrarUltima(todas[todas.length - 1]);
+
+            const lista = todas.slice(-100);
+            grafico.data.labels = lista.map((l) => formatarHora(l.timestamp));
+            grafico.data.datasets[0].data = lista.map((l) => l.temperatura);
+            grafico.data.datasets[1].data = lista.map((l) => l.umidade);
+            grafico.data.datasets[2].data = lista.map((l) => l.luminosidade);
+            grafico.update();
+          })
+          .catch((e) => console.log("Falha ao buscar histórico:", e));
+      }
+
+      // Atualiza ao carregar e depois a cada 5 segundos
+      atualizarHistorico();
+      setInterval(atualizarHistorico, 5000);
+    </script>
+  </body>
+</html>
