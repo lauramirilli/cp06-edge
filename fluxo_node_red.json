@@ -1,0 +1,283 @@
+[
+    {
+        "id": "b2f0000000000001",
+        "type": "tab",
+        "label": "Adega Vinheria Agnello",
+        "disabled": false,
+        "info": "Recebe as leituras do ESP32 por MQTT, salva o histórico em CSV e disponibiliza os dados para o index.html no endereço /Historico."
+    },
+    {
+        "id": "b2f0000000000002",
+        "type": "mqtt-broker",
+        "name": "Broker FIWARE",
+        "broker": "3.135.234.101",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "b2f0000000000010",
+        "type": "comment",
+        "z": "b2f0000000000001",
+        "name": "1. LEITURA E ARMAZENAMENTO: recebe do MQTT e salva no CSV",
+        "info": "",
+        "x": 280,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "b2f0000000000011",
+        "type": "mqtt in",
+        "z": "b2f0000000000001",
+        "name": "Leituras do ESP32",
+        "topic": "/TEF/device022/attrs",
+        "qos": "0",
+        "datatype": "utf8",
+        "broker": "b2f0000000000002",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "b2f0000000000012"
+            ]
+        ]
+    },
+    {
+        "id": "b2f0000000000012",
+        "type": "csv",
+        "z": "b2f0000000000001",
+        "name": "Separar valores",
+        "sep": "|",
+        "hdrin": false,
+        "hdrout": "none",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": ",temperatura,,umidade,,luminosidade,,timestamp",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 370,
+        "y": 120,
+        "wires": [
+            [
+                "b2f0000000000013",
+                "b2f0000000000015"
+            ]
+        ]
+    },
+    {
+        "id": "b2f0000000000013",
+        "type": "csv",
+        "z": "b2f0000000000001",
+        "name": "Montar linha do CSV",
+        "sep": ",",
+        "hdrin": false,
+        "hdrout": "none",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "timestamp,temperatura,umidade,luminosidade",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 590,
+        "y": 120,
+        "wires": [
+            [
+                "b2f0000000000014"
+            ]
+        ]
+    },
+    {
+        "id": "b2f0000000000014",
+        "type": "file",
+        "z": "b2f0000000000001",
+        "name": "Salvar no arquivo",
+        "filename": "historico_adega.csv",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "utf8",
+        "x": 810,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b2f0000000000015",
+        "type": "debug",
+        "z": "b2f0000000000001",
+        "name": "Leitura recebida",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 590,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "b2f0000000000020",
+        "type": "comment",
+        "z": "b2f0000000000001",
+        "name": "2. EXIBIÇÃO: endereço /Historico consumido pelo index.html",
+        "info": "",
+        "x": 280,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "b2f0000000000021",
+        "type": "http in",
+        "z": "b2f0000000000001",
+        "name": "GET /Historico",
+        "url": "/Historico",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 320,
+        "wires": [
+            [
+                "b2f0000000000022"
+            ]
+        ]
+    },
+    {
+        "id": "b2f0000000000022",
+        "type": "file in",
+        "z": "b2f0000000000001",
+        "name": "Ler arquivo",
+        "filename": "historico_adega.csv",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "utf8",
+        "allProps": false,
+        "x": 350,
+        "y": 320,
+        "wires": [
+            [
+                "b2f0000000000023"
+            ]
+        ]
+    },
+    {
+        "id": "b2f0000000000023",
+        "type": "csv",
+        "z": "b2f0000000000001",
+        "name": "Converter em lista",
+        "sep": ",",
+        "hdrin": false,
+        "hdrout": "none",
+        "multi": "mult",
+        "ret": "\\n",
+        "temp": "timestamp,temperatura,umidade,luminosidade",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 560,
+        "y": 320,
+        "wires": [
+            [
+                "b2f0000000000024"
+            ]
+        ]
+    },
+    {
+        "id": "b2f0000000000024",
+        "type": "http response",
+        "z": "b2f0000000000001",
+        "name": "Responder",
+        "statusCode": "",
+        "headers": {
+            "Access-Control-Allow-Origin": "*"
+        },
+        "x": 760,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "b2f0000000000030",
+        "type": "comment",
+        "z": "b2f0000000000001",
+        "name": "3. Ao iniciar: cria o arquivo do histórico, se ainda não existir",
+        "info": "",
+        "x": 290,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "b2f0000000000031",
+        "type": "inject",
+        "z": "b2f0000000000001",
+        "name": "Ao iniciar",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 140,
+        "y": 460,
+        "wires": [
+            [
+                "b2f0000000000032"
+            ]
+        ]
+    },
+    {
+        "id": "b2f0000000000032",
+        "type": "file",
+        "z": "b2f0000000000001",
+        "name": "Criar arquivo",
+        "filename": "historico_adega.csv",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "utf8",
+        "x": 340,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    }
+]
