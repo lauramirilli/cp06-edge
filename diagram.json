@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 48, "left": 14.44, "attrs": {} },
+    { "type": "wokwi-dht22", "id": "dht1", "top": -95.7, "left": 157.8, "attrs": {} },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 80.2,
+      "left": 114.35,
+      "rotate": 270,
+      "attrs": { "value": "4700" }
+    },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr1",
+      "top": 195.2,
+      "left": -191.2,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "dht1:GND", "esp:GND.2", "black", [ "v19.2", "h-86.4" ] ],
+    [ "ldr1:VCC", "esp:5V", "red", [ "h19.2", "v38.4" ] ],
+    [ "ldr1:GND", "esp:GND.1", "black", [ "h28.8", "v-19.6" ] ],
+    [ "ldr1:AO", "esp:33", "green", [ "h9.6", "v-96.7" ] ],
+    [ "dht1:SDA", "r1:2", "blue", [ "v0" ] ],
+    [ "r1:1", "esp:5V", "blue", [ "h0", "v163.2", "h-124.8" ] ],
+    [ "dht1:VCC", "esp:5V", "red", [ "v0", "h-38.4", "v249.6", "h-124.8" ] ],
+    [ "dht1:SDA", "esp:4", "green", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
